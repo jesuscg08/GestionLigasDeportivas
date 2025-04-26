@@ -1,9 +1,17 @@
+using GestionLigasDeportivas.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+//Para su inyección en otros lados
+builder.Services.AddDbContext<LigaDeportivaContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
