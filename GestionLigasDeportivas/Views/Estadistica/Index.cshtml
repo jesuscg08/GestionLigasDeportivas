@@ -1,0 +1,72 @@
+﻿@model IEnumerable<GestionLigasDeportivas.Models.Estadistica>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Goles)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asistencias)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TarjetasRojas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TarjetasAmarillas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Equipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Evento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Jugador)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Goles)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Asistencias)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TarjetasRojas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TarjetasAmarillas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Equipo.EquipoId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Evento.EventoId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Jugador.UsuarioId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.EstadisticaId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.EstadisticaId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.EstadisticaId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
