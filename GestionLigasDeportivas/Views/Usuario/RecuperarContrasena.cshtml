@@ -1,0 +1,56 @@
+﻿@model GestionLigasDeportivas.Models.RecuperarContrasena
+
+@{
+    ViewData["Title"] = "Recuperar contraseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Recuperar contraseña</h1>
+
+<h4>Llene los campos</h4>
+<hr />
+<div class="row">
+    <!-- Mostrar mensaje de error general -->
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @ViewBag.ErrorMessage
+        </div>
+    }
+    <div class="col-md-4">
+        <form asp-action="RecuperarContrasena">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+
+            <div class="form-group">
+                <label asp-for="Correo" class="control-label"></label>
+                <input asp-for="Correo" class="form-control" />
+                <span asp-validation-for="Correo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" class="form-control" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="glyphicon glyphicon-log-in"></i> Recuperar contraseña
+                </button>
+            </div>
+
+            <div class="text-center" style="margin-top: 20px;">
+                @Html.ActionLink("Regresar", "Login", "Usuario", null, new { @class = "btn btn-link" })
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

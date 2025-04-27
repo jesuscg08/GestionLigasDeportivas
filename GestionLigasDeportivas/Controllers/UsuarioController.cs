@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using GestionDeFinanzasPersonales.Models.Security;
 using GestionLigasDeportivas.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace GestionLigasDeportivas.Controllers
 {
@@ -18,42 +17,69 @@ namespace GestionLigasDeportivas.Controllers
             _context = context;
         }
 
-        // GET: Usuario
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Usuarios.ToListAsync());
-        }
-
-        // GET: Usuario/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(m => m.UsuarioId == id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
-        }
-
-        // GET: Usuario/Create
-        public IActionResult Create()
+        //LOGIN
+        public IActionResult Login()
         {
             return View();
         }
 
-        // POST: Usuario/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UsuarioId,Nombre,Correo,TipoUsuario,Contrasena,TokenRecuperacion")] Usuario usuario)
+        public async Task<IActionResult> Login(Login model, string returnUrl)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == model.Correo);
+
+                if (user != null && PasswordHasher.VerificarClave(model.Contrasena, user.Contrasena))
+                {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.Nombre),
+                        new Claim(ClaimTypes.Email, user.Correo),
+                        new Claim("Id", user.UsuarioId.ToString())
+                    };
+
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme, principal,
+                        new AuthenticationProperties { IsPersistent = false }
+                        );
+
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    return RedirectToAction(nameof(EstadisticaController.Index), "Estadistica");
+
+                }
+
+            }
+            else
+            {
+                
+                ModelState.AddModelError(string.Empty, "Contraseña incorrecta");
+                ViewBag.ErrorMessage = "Correo o contraseña incorrectos";
+            }
+
+            return View(model);
+        }
+
+
+        // GET: Usuario/Create
+        public IActionResult Registro()
+        {
+            return View();
+        }
+
+        // POST: Registro
+      
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Registro([Bind("UsuarioId,Nombre,Correo,TipoUsuario,Contrasena,TokenRecuperacion")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {
@@ -64,88 +90,70 @@ namespace GestionLigasDeportivas.Controllers
             return View(usuario);
         }
 
-        // GET: Usuario/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // Recuperar contraseña
+        public IActionResult RecuperarContrasena()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-            return View(usuario);
+            return View(new RecuperarContrasena());
         }
 
-        // POST: Usuario/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: 
+        // Recuperar contraseña
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,Nombre,Correo,TipoUsuario,Contrasena,TokenRecuperacion")] Usuario usuario)
+        public async Task<IActionResult> RecuperarContrasena(RecuperarContrasena model)
         {
-            if (id != usuario.UsuarioId)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == model.Correo && u.Nombre==model.Nombre);
+
+
+                if (user != null)
+                {
+                    HttpContext.Session.SetInt32("RecoveryUserId", user.UsuarioId);
+                    return RedirectToAction("NuevaContrasena");
+
+                }
+                
             }
+            ModelState.AddModelError("Error", "Los datos no coinciden o no existen para recuperar la contraseña");
+            return View(model);
+        }
+
+        //CAMBIAR CONTRASEÑA
+        public IActionResult NuevaContrasena() 
+        {
+            var usuarioId = HttpContext.Session.GetInt32("RecoveryUserId");
+
+            if (usuarioId == null)
+            {
+                return RedirectToAction(nameof(RecuperarContrasena)); 
+            }
+
+            return View(new NuevaContrasenaViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult NuevaContrasena(NuevaContrasenaViewModel model) {
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(usuario);
-                    await _context.SaveChangesAsync();
+
+                var userId= HttpContext.Session.GetInt32("RecoveryUserId");
+                var usuario = _context.Usuarios.Find(userId);
+
+                if (usuario != null) 
+                { 
+                usuario.Contrasena= PasswordHasher.HashClave(model.NuevaContrasena);
+                    _context.SaveChanges();
+
+                    HttpContext.Session.Remove("RecoveryUserId");
+                    TempData["ClaveActualizada"] = "Contraseña actualizada correctamente";
+                    return RedirectToAction(nameof(Login));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UsuarioExists(usuario.UsuarioId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(usuario);
-        }
-
-        // GET: Usuario/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
             }
 
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(m => m.UsuarioId == id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
-        }
-
-        // POST: Usuario/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario != null)
-            {
-                _context.Usuarios.Remove(usuario);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+        return View(model);
         }
 
         private bool UsuarioExists(int id)
