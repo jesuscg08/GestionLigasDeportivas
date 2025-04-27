@@ -25,7 +25,7 @@ namespace GestionLigasDeportivas.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(Login model, string returnUrl)
+        public async Task<IActionResult> Login(Login model, string? returnUrl)
         {
 
             if (ModelState.IsValid)
@@ -58,18 +58,16 @@ namespace GestionLigasDeportivas.Controllers
                 }
 
             }
-            else
-            {
-                
-                ModelState.AddModelError(string.Empty, "Contraseña incorrecta");
+           
+
+               // ModelState.AddModelError(string.Empty, "Contraseña incorrecta");
                 ViewBag.ErrorMessage = "Correo o contraseña incorrectos";
-            }
 
             return View(model);
         }
 
 
-        // GET: Usuario/Create
+        // GET: Usuario/Registro
         public IActionResult Registro()
         {
             return View();
@@ -79,15 +77,32 @@ namespace GestionLigasDeportivas.Controllers
       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registro([Bind("UsuarioId,Nombre,Correo,TipoUsuario,Contrasena,TokenRecuperacion")] Usuario usuario)
+        public async Task<IActionResult> Registro(Usuario model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(usuario);
+                if (_context.Usuarios.Any(u=>u.Correo==model.Correo))
+                {
+                    return View(model);
+                }
+
+                var nuevoUsuario = new Usuario
+                {
+                    Nombre=model.Nombre,
+                    Correo= model.Correo,
+                    Contrasena= PasswordHasher.HashClave(model.Contrasena),
+                    TipoUsuario=model.TipoUsuario
+                };
+
+                _context.Add(nuevoUsuario);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                TempData["RegistroExitoso"] = "¡Registro exitoso! Por favor inicie sesión.";
+                return RedirectToAction(nameof(Login));
+
+
             }
-            return View(usuario);
+            return View(model);
         }
 
         // Recuperar contraseña

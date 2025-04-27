@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Registro">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label"></label>
@@ -25,7 +25,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="TipoUsuario" class="control-label"></label>
-                <input asp-for="TipoUsuario" class="form-control" />
+                <select asp-for="TipoUsuario" class="form-control">
+                    <option value="">-- Seleccione un tipo --</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Jugador">Jugador</option>
+                    <option value="Entrenador">Entrenador</option>
+                </select>
                 <span asp-validation-for="TipoUsuario" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -33,20 +38,16 @@
                 <input asp-for="Contrasena" class="form-control" />
                 <span asp-validation-for="Contrasena" class="text-danger"></span>
             </div>
+           
             <div class="form-group">
-                <label asp-for="TokenRecuperacion" class="control-label"></label>
-                <input asp-for="TokenRecuperacion" class="form-control" />
-                <span asp-validation-for="TokenRecuperacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Registro" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Login">Regresar</a>
 </div>
 
 @section Scripts {

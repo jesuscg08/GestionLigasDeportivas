@@ -21,11 +21,22 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Necesario para el funcionamiento de la app
 });
 
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/Usuario/Login"; // o donde tengas tu login
+        options.AccessDeniedPath = "/Usuario/AccessDenied"; // si quieres una vista de acceso denegado
+    });
+
+
 var app = builder.Build();
 
 // Configurar el middleware para usar las sesiones
 app.UseSession();
 
+//auth
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 // Configure the HTTP request pipeline.
