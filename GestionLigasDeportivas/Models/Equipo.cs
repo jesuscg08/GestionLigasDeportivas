@@ -15,6 +15,7 @@ public partial class Equipo
     [Required(ErrorMessage = "El nombre del equipo es obligatoria")]
     public string? Nombre { get; set; }
 
+    [Required(ErrorMessage = "Es necesario la elección de una Liga")]
     [Display(Name = "Liga")]
     public int? LigaId { get; set; }
 

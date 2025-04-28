@@ -1,11 +1,11 @@
 ﻿@model GestionLigasDeportivas.Models.Liga
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles de la Liga";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<h1>Detalles de la Liga</h1>
 
 <div>
     <h4>Liga</h4>
@@ -38,6 +38,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.LigaId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.LigaId">Editar</a> |
+    <a asp-action="Index">Regresar</a>
 </div>

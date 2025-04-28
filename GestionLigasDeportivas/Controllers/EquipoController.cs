@@ -49,13 +49,11 @@ namespace GestionLigasDeportivas.Controllers
         // GET: Equipo/Create
         public IActionResult Create()
         {
-            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "LigaId");
+            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "Nombre");
             return View();
         }
 
         // POST: Equipo/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EquipoId,Nombre,LigaId")] Equipo equipo)
@@ -66,7 +64,7 @@ namespace GestionLigasDeportivas.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "LigaId", equipo.LigaId);
+            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "Nombre", equipo.LigaId);
             return View(equipo);
         }
 
@@ -83,7 +81,7 @@ namespace GestionLigasDeportivas.Controllers
             {
                 return NotFound();
             }
-            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "LigaId", equipo.LigaId);
+            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "Nombre", equipo.LigaId);
             return View(equipo);
         }
 
@@ -119,7 +117,7 @@ namespace GestionLigasDeportivas.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "LigaId", equipo.LigaId);
+            ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "Nombre", equipo.LigaId);
             return View(equipo);
         }
 

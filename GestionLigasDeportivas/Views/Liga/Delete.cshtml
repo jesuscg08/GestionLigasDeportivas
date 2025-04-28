@@ -1,13 +1,13 @@
 ﻿@model GestionLigasDeportivas.Models.Liga
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar Liga";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Delete</h1>
+<h1>Eliminar Liga</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>¿"Estas seguro de eliminar esta Liga"?</h3>
 <div>
     <h4>Liga</h4>
     <hr />
@@ -40,7 +40,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="LigaId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a asp-action="Index">Regresar</a>
     </form>
 </div>
