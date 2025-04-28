@@ -21,6 +21,22 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Necesario para el funcionamiento de la app
 });
 
+
+builder.Services.AddAuthorization(options =>
+{
+    //Admin: Acceso TOTAL (solo admin)
+    options.AddPolicy("FullAccess", policy => policy.RequireRole("Administrador"));
+
+    //Entrenador: Acceso intermedio (admin + entrenador)
+    options.AddPolicy("MediumAccess", policy => policy.RequireRole("Administrador", "Entrenador"));
+
+    //Jugador: Acceso MÍNIMO (todos los roles)
+    options.AddPolicy("BasicAccess", policy => policy.RequireRole("Administrador", "Entrenador", "Jugador"));
+
+    //Extra: Recursos compartidos entre entrenador/jugador (sin admin)
+    options.AddPolicy("SharedResources", policy => policy.RequireRole("Entrenador", "Jugador"));
+});
+
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
     {

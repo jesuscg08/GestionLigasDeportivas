@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestionLigasDeportivas.Models;
 
 public partial class Equipo
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int EquipoId { get; set; }
 
+    [Display(Name = "Nombre del equipo")]
+    [Required(ErrorMessage = "El nombre del equipo es obligatoria")]
     public string? Nombre { get; set; }
 
+    [Display(Name = "Liga")]
     public int? LigaId { get; set; }
 
     public virtual ICollection<EntrenadorEquipo> EntrenadorEquipos { get; set; } = new List<EntrenadorEquipo>();

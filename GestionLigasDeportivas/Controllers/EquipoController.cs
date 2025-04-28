@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GestionLigasDeportivas.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestionLigasDeportivas.Controllers
 {
+    [Authorize(Policy = "MediumAccess")]
     public class EquipoController : Controller
     {
         private readonly LigaDeportivaContext _context;

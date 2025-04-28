@@ -2,6 +2,7 @@
 using GestionLigasDeportivas.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -38,7 +39,10 @@ namespace GestionLigasDeportivas.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Nombre),
                         new Claim(ClaimTypes.Email, user.Correo),
-                        new Claim("Id", user.UsuarioId.ToString())
+                        new Claim("Id", user.UsuarioId.ToString()),
+                        new Claim(ClaimTypes.Role, user.TipoUsuario)
+
+
                     };
 
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -53,7 +57,7 @@ namespace GestionLigasDeportivas.Controllers
                     {
                         return Redirect(returnUrl);
                     }
-                    return RedirectToAction(nameof(EstadisticaController.Index), "Estadistica");
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
 
                 }
 
@@ -169,6 +173,14 @@ namespace GestionLigasDeportivas.Controllers
             }
 
         return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Logout() {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Usuario");
         }
 
         private bool UsuarioExists(int id)
