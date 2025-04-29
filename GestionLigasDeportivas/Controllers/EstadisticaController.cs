@@ -49,19 +49,33 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Estadistica/Create
-        public IActionResult Create()
+        [Authorize(Policy = "FullAccess")]
+        public IActionResult Create(int? equipoId)
         {
-            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId");
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId");
-            ViewData["JugadorId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId");
+            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre", equipoId);
+            var jugadores = new List<Usuario>();
+            if (equipoId.HasValue)
+            {
+                jugadores = _context.JugadorEquipos
+                    .Where(je => je.EquipoId == equipoId)
+                    .Select(je => je.Usuario)
+                    .Where(u => u != null)
+                    .ToList();
+           
+
+            }
+
+
+            ViewData["JugadorId"] = new SelectList(jugadores, "UsuarioId", "Nombre");
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "Nombre");
+            
             return View();
         }
 
-        // POST: Estadistica/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Create([Bind("EstadisticaId,EventoId,JugadorId,EquipoId,Goles,Asistencias,TarjetasRojas,TarjetasAmarillas")] Estadistica estadistica)
         {
             if (ModelState.IsValid)
@@ -77,7 +91,8 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Estadistica/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize(Policy = "FullAccess")]
+        public async Task<IActionResult> Edit(int? id,int? equipoId)
         {
             if (id == null)
             {
@@ -89,17 +104,24 @@ namespace GestionLigasDeportivas.Controllers
             {
                 return NotFound();
             }
-            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId", estadistica.EquipoId);
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", estadistica.EventoId);
-            ViewData["JugadorId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", estadistica.JugadorId);
+
+            var equipoFiltroId = equipoId ?? estadistica.EquipoId;
+            var jugadores = _context.JugadorEquipos
+                .Where(je => je.EquipoId == equipoFiltroId)
+                .Select(je => je.Usuario)
+                .ToList();
+            ViewData["JugadorId"] = new SelectList(jugadores, "UsuarioId", "Nombre", estadistica.JugadorId);
+            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre", estadistica.EquipoId);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "Nombre", estadistica.EventoId);
+           
             return View(estadistica);
         }
 
         // POST: Estadistica/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Edit(int id, [Bind("EstadisticaId,EventoId,JugadorId,EquipoId,Goles,Asistencias,TarjetasRojas,TarjetasAmarillas")] Estadistica estadistica)
         {
             if (id != estadistica.EstadisticaId)
@@ -127,13 +149,19 @@ namespace GestionLigasDeportivas.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            var jugadores = _context.JugadorEquipos
+                .Where(je => je.EquipoId == estadistica.EquipoId)
+                .Select(je => je.Usuario)
+                .ToList();
+
             ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId", estadistica.EquipoId);
             ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", estadistica.EventoId);
-            ViewData["JugadorId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", estadistica.JugadorId);
+            ViewData["JugadorId"] = new SelectList(jugadores, "UsuarioId", "UsuarioId", estadistica.JugadorId);
             return View(estadistica);
         }
 
         // GET: Estadistica/Delete/5
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -157,6 +185,7 @@ namespace GestionLigasDeportivas.Controllers
         // POST: Estadistica/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var estadistica = await _context.Estadisticas.FindAsync(id);

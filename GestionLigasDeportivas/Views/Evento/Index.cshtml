@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<GestionLigasDeportivas.Models.Evento>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Eventos";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Eventos</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Crear nuevo evento</a>
 </p>
 <table class="table">
     <thead>
@@ -21,9 +21,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Hora)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notificacion)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.EquipoLocal)
@@ -47,18 +44,15 @@
                 @Html.DisplayFor(modelItem => item.Hora)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Notificacion)
+                @Html.DisplayFor(modelItem => item.EquipoLocal.Nombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EquipoLocal.EquipoId)
+                @Html.DisplayFor(modelItem => item.EquipoVisitante.Nombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EquipoVisitante.EquipoId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EventoId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EventoId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.EventoId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.EventoId">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.EventoId">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.EventoId">Eliminar</a>
             </td>
         </tr>
 }

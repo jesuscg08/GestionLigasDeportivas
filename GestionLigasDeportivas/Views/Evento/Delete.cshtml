@@ -1,13 +1,13 @@
 ﻿@model GestionLigasDeportivas.Models.Evento
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar evento";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Delete</h1>
+<h1>Eliminar evento</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>¿Estas seguro de eliminar este evento o partido?</h3>
 <div>
     <h4>Evento</h4>
     <hr />
@@ -31,28 +31,22 @@
             @Html.DisplayFor(model => model.Hora)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notificacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notificacion)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.EquipoLocal)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EquipoLocal.EquipoId)
+            @Html.DisplayFor(model => model.EquipoLocal.Nombre)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.EquipoVisitante)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EquipoVisitante.EquipoId)
+            @Html.DisplayFor(model => model.EquipoVisitante.Nombre)
         </dd>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="EventoId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index">Regresar</a>
     </form>
 </div>

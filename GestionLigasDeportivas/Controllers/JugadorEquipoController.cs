@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GestionLigasDeportivas.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestionLigasDeportivas.Controllers
 {
+    [Authorize(Policy = "MediumAccess")]
     public class JugadorEquipoController : Controller
     {
         private readonly LigaDeportivaContext _context;
@@ -46,10 +48,16 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: JugadorEquipo/Create
+        
         public IActionResult Create()
         {
-            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId");
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId");
+            //Filtrar
+            var jugadores = _context.Usuarios
+            .Where(u => u.TipoUsuario == "Jugador")
+            .ToList();
+
+            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre");
+            ViewData["UsuarioId"] = new SelectList(jugadores, "UsuarioId", "Nombre");
             return View();
         }
 
@@ -84,8 +92,11 @@ namespace GestionLigasDeportivas.Controllers
             {
                 return NotFound();
             }
-            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId", jugadorEquipo.EquipoId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", jugadorEquipo.UsuarioId);
+
+
+
+            ViewData["EquipoId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre", jugadorEquipo.EquipoId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "Nombre", jugadorEquipo.UsuarioId);
             return View(jugadorEquipo);
         }
 

@@ -2,6 +2,7 @@
 using GestionLigasDeportivas.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -181,6 +182,20 @@ namespace GestionLigasDeportivas.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
             return RedirectToAction("Login", "Usuario");
+        }
+
+
+        //ACCESO RESTRINGIDO
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            // Opcional: Puedes personalizar el mensaje según el rol
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewBag.ErrorMessage = $"Tu rol actual: {User.FindFirst(ClaimTypes.Role)?.Value}. Consulte con el Administrador";
+            }
+
+            return View();
         }
 
         private bool UsuarioExists(int id)

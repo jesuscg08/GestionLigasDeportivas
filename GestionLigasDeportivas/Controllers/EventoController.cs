@@ -48,10 +48,11 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Evento/Create
+        [Authorize(Policy = "FullAccess")]
         public IActionResult Create()
         {
-            ViewData["EquipoLocalId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId");
-            ViewData["EquipoVisitanteId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId");
+            ViewData["EquipoLocalId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre");
+            ViewData["EquipoVisitanteId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre");
             return View();
         }
 
@@ -60,6 +61,7 @@ namespace GestionLigasDeportivas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Create([Bind("EventoId,Nombre,Fecha,Hora,EquipoLocalId,EquipoVisitanteId,Notificacion")] Evento evento)
         {
             if (ModelState.IsValid)
@@ -74,6 +76,7 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Evento/Edit/5
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,16 +89,16 @@ namespace GestionLigasDeportivas.Controllers
             {
                 return NotFound();
             }
-            ViewData["EquipoLocalId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId", evento.EquipoLocalId);
-            ViewData["EquipoVisitanteId"] = new SelectList(_context.Equipos, "EquipoId", "EquipoId", evento.EquipoVisitanteId);
+            ViewData["EquipoLocalId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre", evento.EquipoLocalId);
+            ViewData["EquipoVisitanteId"] = new SelectList(_context.Equipos, "EquipoId", "Nombre", evento.EquipoVisitanteId);
             return View(evento);
         }
 
         // POST: Evento/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Edit(int id, [Bind("EventoId,Nombre,Fecha,Hora,EquipoLocalId,EquipoVisitanteId,Notificacion")] Evento evento)
         {
             if (id != evento.EventoId)
@@ -129,6 +132,7 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Evento/Delete/5
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -151,6 +155,7 @@ namespace GestionLigasDeportivas.Controllers
         // POST: Evento/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var evento = await _context.Eventos.FindAsync(id);

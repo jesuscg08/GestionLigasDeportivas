@@ -47,6 +47,7 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Equipo/Create
+        [Authorize(Policy = "FullAccess")]
         public IActionResult Create()
         {
             ViewData["LigaId"] = new SelectList(_context.Ligas, "LigaId", "Nombre");
@@ -56,6 +57,7 @@ namespace GestionLigasDeportivas.Controllers
         // POST: Equipo/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Create([Bind("EquipoId,Nombre,LigaId")] Equipo equipo)
         {
             if (ModelState.IsValid)
@@ -69,6 +71,7 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Equipo/Edit/5
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,6 +93,7 @@ namespace GestionLigasDeportivas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Edit(int id, [Bind("EquipoId,Nombre,LigaId")] Equipo equipo)
         {
             if (id != equipo.EquipoId)
@@ -122,6 +126,7 @@ namespace GestionLigasDeportivas.Controllers
         }
 
         // GET: Equipo/Delete/5
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -143,6 +148,7 @@ namespace GestionLigasDeportivas.Controllers
         // POST: Equipo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "FullAccess")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var equipo = await _context.Equipos.FindAsync(id);
